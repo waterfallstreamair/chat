@@ -12,7 +12,10 @@ import H3 from '../../components/H3';
 import H1 from '../../components/H1';
 import Content from '../../components/Content';
 import { Slack } from './slackapp';
-import Chat, { Center, Input, Selected, NotSelected, Left } from './Chat';
+import Chat, { 
+  Center, Input, Selected, NotSelected, Left, Image, SpaceBetween, Strong,
+  SmallImage, MobileColumn, Toggle
+} from './Chat';
 
 export class HomePage extends React.Component {
   constructor(props) {
@@ -25,6 +28,8 @@ export class HomePage extends React.Component {
       step: 'messages',
       selected: 'general',
       messages: null,
+      mobile: false,
+      toggle: false
     };
     this.slack = Slack.getInstance();
     this.name = null;
@@ -33,6 +38,19 @@ export class HomePage extends React.Component {
   }
 
   componentDidMount() {
+    window.addEventListener('resize', e => {
+      if (window.visualViewport.width < 800) {
+        this.setState({ 
+          mobile: true,
+          toggle: true
+        })
+      } else {
+        this.setState({ 
+          mobile: false ,
+          toggle: false
+        })
+      }
+    })
     this.slack.load();
     try {
       this.slack.addUser('fullname1', 'name1');
@@ -54,10 +72,6 @@ export class HomePage extends React.Component {
       chats,
       channels,
     });
-  }
-
-  componentWillUnmount() {
-    // this.slack.save()
   }
 
   onLogin = () => {
@@ -97,6 +111,7 @@ export class HomePage extends React.Component {
     } catch (e) {
       console.log({ e });
     }
+    this.setState({ step: 'messages' });
   };
 
   selectChannel = id => {
@@ -126,10 +141,23 @@ export class HomePage extends React.Component {
       event.target.value = ''
     }
   };
+  
+  toggleMobile = () => {
+    this.setState(prev => ({ 
+      mobile: !prev.mobile 
+    }));
+  }
 
   render() {
-    const { chats, channels, step, selected, messages } = this.state;
+    const { chats, channels, step, selected, messages, mobile, toggle } = this.state;
     console.log({ state: this.state });
+    let user = null
+    try{
+      user = this.slack.user
+    } catch(e) {
+      console.log({ e })
+    }
+    console.log({ user })
     return (
       <article>
         <Helmet>
@@ -173,9 +201,21 @@ export class HomePage extends React.Component {
         )}
         {step === 'messages' && (
           <Content>
-            <Column>
-              <H1>Klassroom</H1>
-              <H3 onClick={this.onAddChannel}>Channels +</H3>
+            <MobileColumn mobile={mobile}>
+             
+                {toggle && 
+                <Toggle onClick={this.toggleMobile}>{'='}</Toggle>}
+             
+              <SpaceBetween>
+                <Strong>Klassroom <img src="/dropdown.png" /></Strong>
+                <Image src="/notify.png" />
+              </SpaceBetween>
+              <NotSelected><SmallImage src="/green-circle.png" />{user && user.username || ''}</NotSelected>
+              <H3><Image src="/all-threads.png" />All Threads</H3>
+               <SpaceBetween onClick={this.onAddChannel}>
+                <strong>Channels</strong>
+                <Image src="/plus.png" />
+              </SpaceBetween>
             {channels &&
                 [...channels].map(e => {
               const [k, v] = e;
@@ -187,7 +227,11 @@ export class HomePage extends React.Component {
                     </NotSelected>)
             }
             )}
-              <H3>Direct Messages +</H3>
+            <H3 onClick={this.onAddChannel}>+ Add a channel</H3>
+            <SpaceBetween>
+              <strong>Direct Messages</strong>
+              <Image src="/plus.png" />
+            </SpaceBetween>
               {chats &&
                 [...chats].map(e => {
                   const [k, v] = e;
@@ -198,7 +242,17 @@ export class HomePage extends React.Component {
                       {k}
                     </NotSelected>)
                 })}
-            </Column>
+                <SpaceBetween>
+                <div>
+                  + <Strong>Invite people</Strong>
+                </div>
+                </SpaceBetween>
+           <SpaceBetween>
+              <strong>Apps</strong>
+              <Image src="/plus.png" />
+            </SpaceBetween>
+            </MobileColumn>
+            
             <Chat items={messages} onMessage={this.onMessage} />
           </Content>
         )}

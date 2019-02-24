@@ -27,6 +27,13 @@ import LanguageProvider from 'containers/LanguageProvider';
 import '!file-loader?name=[name].[ext]!./images/favicon.ico';
 import '!file-loader?name=[name].[ext]!./images/image.png';
 import '!file-loader?name=[name].[ext]!./images/ava.png';
+
+import '!file-loader?name=[name].[ext]!./images/plus.png';
+import '!file-loader?name=[name].[ext]!./images/notify.png';
+import '!file-loader?name=[name].[ext]!./images/green-circle.png';
+import '!file-loader?name=[name].[ext]!./images/dropdown.png';
+import '!file-loader?name=[name].[ext]!./images/all-threads.png';
+
 import 'file-loader?name=.htaccess!./.htaccess'; // eslint-disable-line import/extensions
 
 import configureStore from './configureStore';

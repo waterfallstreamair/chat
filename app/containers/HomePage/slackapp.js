@@ -19,7 +19,7 @@ export class Slack {
   }
 
   get user() {
-    return this.users.get(userID);
+    return this.users.get(this.userID);
   }
 
   set user(newuser) {

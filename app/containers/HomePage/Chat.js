@@ -2,6 +2,63 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+export const Toggle = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  padding-right: 0.3em;
+  padding-left: 0.1em;
+  cursor: pointer;
+`;
+
+export const MobileColumn = ({ mobile, children }) => {
+  const Styled = styled.div`
+  width: ${mobile ? '2em' : '20em'};
+  min-width: ${mobile ? '2em' : '20em'};
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  padding-top: 1em;
+  padding-right: 0em;
+  border-right: solid 1px #cfcfcf;
+  background-color: #3F0E40;
+  color: rgb(197,183,198);
+  overflow: hidden;
+`;
+ return (<Styled>{children}</Styled>);
+};
+
+export const Strong = styled.strong`
+  color: #fff;
+  font-size: 1.2em;
+`;
+
+export const SpaceBetween = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  align-content: center;
+  padding-right: 1em;
+  padding-left: 2em;
+  margin-top: 1.5em;
+  cursor: pointer;
+`;
+
+export const Image = styled.img`
+  height: 1.5em;
+`;
+
+export const SmallImage = styled.img`
+  height: 1em;
+  margin-right: 0.3em;
+`;
+
 export const Message = styled.input`
   width: 95%;
   height: 3em;
@@ -12,6 +69,9 @@ export const Message = styled.input`
 
 export const NotSelected = styled.div`
   padding-left: 2em;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 `;
 
 export const Selected = styled.div`

@@ -5,7 +5,7 @@ const H3 = styled.div`
   font-weight: bold;
   cursor: pointer;
   margin-top: 1em;
-  padding-left: 2em;
+  margin-left: 2em;
 `;
 
 export default H3;
