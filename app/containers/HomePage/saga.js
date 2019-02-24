@@ -5,7 +5,5 @@ import request from 'utils/request';
  * Root saga manages watcher lifecycle
  */
 export default function* rootSaga() {
-  yield all([
-   
-  ]);
+  yield all([]);
 }

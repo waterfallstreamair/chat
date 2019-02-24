@@ -5,9 +5,7 @@ import homeReducer from '../reducer';
 describe('homeReducer', () => {
   let state;
   beforeEach(() => {
-    state = fromJS({
-     
-    });
+    state = fromJS({});
   });
 
   it('should return the initial state', () => {

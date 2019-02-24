@@ -12,9 +12,19 @@ import H3 from '../../components/H3';
 import H1 from '../../components/H1';
 import Content from '../../components/Content';
 import { Slack } from './slackapp';
-import Chat, { 
-  Center, Input, Selected, NotSelected, Left, Image, SpaceBetween, Strong,
-  SmallImage, MobileColumn, Toggle
+import Chat, {
+  Center,
+  Input,
+  Selected,
+  NotSelected,
+  Left,
+  Image,
+  SpaceBetween,
+  Strong,
+  SmallImage,
+  MobileColumn,
+  Toggle,
+  ChatUser,
 } from './Chat';
 
 export class HomePage extends React.Component {
@@ -29,28 +39,29 @@ export class HomePage extends React.Component {
       selected: 'general',
       messages: null,
       mobile: false,
-      toggle: false
+      toggle: false,
     };
     this.slack = Slack.getInstance();
     this.name = null;
     this.fullname = null;
     this.channel = null;
+    this.chat = null;
   }
 
   componentDidMount() {
     window.addEventListener('resize', e => {
       if (window.visualViewport.width < 800) {
-        this.setState({ 
+        this.setState({
           mobile: true,
-          toggle: true
-        })
+          toggle: true,
+        });
       } else {
-        this.setState({ 
-          mobile: false ,
-          toggle: false
-        })
+        this.setState({
+          mobile: false,
+          toggle: false,
+        });
       }
-    })
+    });
     this.slack.load();
     try {
       this.slack.addUser('fullname1', 'name1');
@@ -62,7 +73,7 @@ export class HomePage extends React.Component {
     } catch (e) {
       console.log({ e });
     }
-   
+
     if (!this.slack.isLogged()) {
       this.setState({ step: 'login' });
     }
@@ -86,8 +97,8 @@ export class HomePage extends React.Component {
     } catch (e) {
       console.log({ e });
     }
-    try{
-      this.selectChannel('general').addMessage('Hello')
+    try {
+      this.selectChannel('general').addMessage('Hello');
     } catch (e) {
       console.log({ e });
     }
@@ -106,7 +117,7 @@ export class HomePage extends React.Component {
       this.slack.save();
       this.setState({
         step: 'messages',
-        channels: this.slack.channels, 
+        channels: this.slack.channels,
       });
     } catch (e) {
       console.log({ e });
@@ -118,46 +129,92 @@ export class HomePage extends React.Component {
     this.setState({
       selected: id,
       messages: this.slack.channels.get(id).messages,
-    })
+    });
     return this.slack.channels.get(id);
   };
-  
+
   selectChat = id => {
     this.setState({
       selected: id,
       messages: this.slack.chats.get(id).messages,
-    })
+    });
   };
 
   onMessage = event => {
     if (event.charCode == '13') {
-      this.slack.channels
-        .get(this.state.selected)
-        .addMessage(event.target.value);
-      this.slack.save()
-      this.setState({
-        messages: this.slack.channels.get(this.state.selected).messages,
-      })
-      event.target.value = ''
+      if (this.slack.channels.has(this.state.selected)) {
+        this.slack.channels
+          .get(this.state.selected)
+          .addMessage(event.target.value);
+        this.setState({
+          messages: this.slack.channels.get(this.state.selected).messages,
+        })
+      } else {
+        this.slack.chats
+          .get(this.state.selected)
+          .addMessage(event.target.value);
+        this.setState({
+          messages: this.slack.chats.get(this.state.selected).messages,
+        })
+      }
+      this.slack.save();
+      event.target.value = '';
     }
   };
-  
+
   toggleMobile = () => {
-    this.setState(prev => ({ 
-      mobile: !prev.mobile 
+    this.setState(prev => ({
+      mobile: !prev.mobile, 
     }));
-  }
+  };
+
+  addChatStart = () => {
+    this.setState({
+      step: 'addChat',
+    });
+  };
+
+  onSubmitChat = () => {
+    try {
+      this.slack.addChat([...this.chat.value.split(',')]);
+      this.slack.save();
+      this.setState({
+        step: 'messages',
+        chats: this.slack.chats,
+      });
+    } catch (e) {
+      console.log({ e });
+    }
+    this.setState({ step: 'messages' });
+  };
+
+  addChatUser = id => {
+    this.chat.value = [
+      ...new Set(
+        [...this.chat.value.split(','), id]
+        .filter(e => e))
+      .join(',')]
+  };
 
   render() {
-    const { chats, channels, step, selected, messages, mobile, toggle } = this.state;
+    const {
+      users,
+      chats,
+      channels,
+      step,
+      selected,
+      messages,
+      mobile,
+      toggle,
+    } = this.state;
     console.log({ state: this.state });
-    let user = null
-    try{
-      user = this.slack.user
-    } catch(e) {
-      console.log({ e })
+    let user = null;
+    try {
+      user = this.slack.user;
+    } catch (e) {
+      console.log({ e });
     }
-    console.log({ user })
+    console.log({ user });
     return (
       <article>
         <Helmet>
@@ -169,15 +226,18 @@ export class HomePage extends React.Component {
             <Center>
               <img src="/image.png" />
               <div>
-                <Input required ref={r => this.name = r} placeholder="name" 
+                <Input
+required ref={r => this.name = r} placeholder="name" 
                   title="Your name"
                 />
               </div>
               <div>
-                <Input required ref={r => this.fullname = r} 
-                placeholder="fullname" title="Your full name" />
+                <Input
+required ref={r => this.fullname = r} 
+                  placeholder="fullname" title="Your full name" />
               </div>
-              <Input onClick={this.onLogin} type="button" value="Submit"
+              <Input
+onClick={this.onLogin} type="button" value="Submit"
                 title="Submit data"
               />
             </Center>
@@ -191,47 +251,92 @@ export class HomePage extends React.Component {
                 Name
               </Left>
               <div>
-                <Input required ref={r => this.channel = r} 
-                  placeholder="general" title="New channel name" />
+                <Input
+required ref={r => this.channel = r} 
+                  placeholder="general"
+                  title="New channel name"
+                />
               </div>
-              <Input onClick={this.onSubmitChannel} type="button" 
-                value="Create Channel" />
+              <Input
+onClick={this.onSubmitChannel} type="button" 
+                value="Create Channel"
+              />
+            </Center>
+          </Content>
+        )}
+        {step === 'addChat' && (
+          <Content>
+            <Center>
+              <Left>
+                <h2>Direct Messages</h2>
+              </Left>
+              <div>
+                <Input
+disabled ref={r => this.chat = r} 
+                  placeholder="users"
+                  title="New chat users"
+                />
+              </div>
+              <Left>
+                {users && [...users].map(e => {
+                    const [k, v] = e;
+                  return (
+                      <ChatUser onClick={() => this.addChatUser(k)}>
+                        <img src="/ava.png" />
+                        {`${v.name} - ${k}`}
+                    </ChatUser>
+                  )
+                  })}
+              </Left>
+              <Input
+onClick={this.onSubmitChat} type="button" 
+                value="Create Chat"
+              />
             </Center>
           </Content>
         )}
         {step === 'messages' && (
           <Content>
             <MobileColumn mobile={mobile}>
-             
-                {toggle && 
-                <Toggle onClick={this.toggleMobile}>{'='}</Toggle>}
-             
+              {toggle && <Toggle onClick={this.toggleMobile}>=</Toggle>}
+
               <SpaceBetween>
-                <Strong>Klassroom <img src="/dropdown.png" /></Strong>
+                <Strong>
+                  Klassroom <img src="/dropdown.png" />
+                </Strong>
                 <Image src="/notify.png" />
               </SpaceBetween>
-              <NotSelected><SmallImage src="/green-circle.png" />{user && user.username || ''}</NotSelected>
-              <H3><Image src="/all-threads.png" />All Threads</H3>
-               <SpaceBetween onClick={this.onAddChannel}>
+              <NotSelected>
+                <SmallImage src="/green-circle.png" />
+                {(user && user.username) || ''}
+              </NotSelected>
+              <H3>
+                <Image src="/all-threads.png" />
+                All Threads
+              </H3>
+              <SpaceBetween onClick={this.onAddChannel}>
                 <strong>Channels</strong>
                 <Image src="/plus.png" />
               </SpaceBetween>
-            {channels &&
+              {channels &&
                 [...channels].map(e => {
-              const [k, v] = e;
-              return k === selected ? (
+                  const [k, v] = e;
+                  return k === selected ? (
                     <Selected key={v.title}># {v.title}</Selected>
                   ) : (
-                    <NotSelected onClick={() => this.selectChannel(k)} key={v.title}>
+                    <NotSelected
+                      onClick={() => this.selectChannel(k)}
+                      key={v.title}
+                    >
                       # {v.title}
                     </NotSelected>)
-            }
-            )}
-            <H3 onClick={this.onAddChannel}>+ Add a channel</H3>
-            <SpaceBetween>
-              <strong>Direct Messages</strong>
-              <Image src="/plus.png" />
-            </SpaceBetween>
+                }
+                )}
+              <H3 onClick={this.onAddChannel}>+ Add a channel</H3>
+              <SpaceBetween onClick={this.addChatStart} >
+                <strong>Direct Messages</strong>
+                <Image src="/plus.png" />
+              </SpaceBetween>
               {chats &&
                 [...chats].map(e => {
                   const [k, v] = e;
@@ -240,19 +345,20 @@ export class HomePage extends React.Component {
                   ) : (
                     <NotSelected onClick={() => this.selectChat(k)} key={k}>
                       {k}
-                    </NotSelected>)
+                    </NotSelected>
+                  );
                 })}
-                <SpaceBetween>
+              <SpaceBetween>
                 <div>
                   + <Strong>Invite people</Strong>
                 </div>
-                </SpaceBetween>
-           <SpaceBetween>
-              <strong>Apps</strong>
-              <Image src="/plus.png" />
-            </SpaceBetween>
+              </SpaceBetween>
+              <SpaceBetween>
+                <strong>Apps</strong>
+                <Image src="/plus.png" />
+              </SpaceBetween>
             </MobileColumn>
-            
+
             <Chat items={messages} onMessage={this.onMessage} />
           </Content>
         )}

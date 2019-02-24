@@ -2,6 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+export const ChatUser = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  color: #000;
+  font-size: 1em;
+  font-weight: bold;
+  padding-right: 0.3em;
+  padding-left: 0.1em;
+  cursor: pointer;
+  &:hover {
+    border: solid 1px rgba(0, 0, 255, 0.1);
+  }
+  width: 100%;
+`;
+
 export const Toggle = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -17,20 +34,20 @@ export const Toggle = styled.div`
 
 export const MobileColumn = ({ mobile, children }) => {
   const Styled = styled.div`
-  width: ${mobile ? '2em' : '20em'};
-  min-width: ${mobile ? '2em' : '20em'};
-  display: flex;
-  justify-content: flex-start;
-  flex-flow: column nowrap;
-  align-items: stretch;
-  padding-top: 1em;
-  padding-right: 0em;
-  border-right: solid 1px #cfcfcf;
-  background-color: #3F0E40;
-  color: rgb(197,183,198);
-  overflow: hidden;
-`;
- return (<Styled>{children}</Styled>);
+    width: ${mobile ? '2em' : '20em'};
+    min-width: ${mobile ? '2em' : '20em'};
+    display: flex;
+    justify-content: flex-start;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    padding-top: 1em;
+    padding-right: 0em;
+    border-right: solid 1px #cfcfcf;
+    background-color: #3f0e40;
+    color: rgb(197, 183, 198);
+    overflow: hidden;
+  `;
+  return <Styled>{children}</Styled>;
 };
 
 export const Strong = styled.strong`
@@ -172,17 +189,17 @@ const Chat = ({ items, onMessage }) => (
           <Row key={`title-${e.id}`}>
             <img src="/ava.png" />
             <div>
-            <User>{e.userID}</User>
-            <Date>{e.date.toLocaleTimeString()}</Date>
-            <Text>{e.text}</Text>
+              <User>{e.userID}</User>
+              <Date>{e.date.toLocaleTimeString()}</Date>
+              <Text>{e.text}</Text>
             </div>
           </Row>
         );
       })}
-      <MessageWrapper>+
-      <Message placeholder="Message" onKeyPress={onMessage} />
+    <MessageWrapper>
+      + <Message placeholder="Message" onKeyPress={onMessage} />
       <Actions>@ :)</Actions>
-      </MessageWrapper>
+    </MessageWrapper>
   </Table>
 );
 

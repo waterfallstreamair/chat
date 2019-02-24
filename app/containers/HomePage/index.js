@@ -9,17 +9,13 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import {
- 
-} from './selectors';
+import {} from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 import HomePage from './Page';
 import * as actions from './actions';
 
-const mapStateToProps = createStructuredSelector({
- 
-});
+const mapStateToProps = createStructuredSelector({});
 
 const mapDispatchToProps = dispatch => ({});
 
