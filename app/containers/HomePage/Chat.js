@@ -3,17 +3,29 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 export const Message = styled.input`
-  width: 100%;
+  width: 95%;
   height: 3em;
-  border: solid 1px #ccc;
-  border-radius: 0.5em;
-  position: absolute;
-  bottom: 0em;
+  border-left: solid 1px #ccc;
+  margin-left: 1.5em;
+  padding: 0.5em;
+`;
+
+export const NotSelected = styled.div`
+  padding-left: 2em;
 `;
 
 export const Selected = styled.div`
-  background-color: #ccc;
+  background-color: rgb(17, 100, 163);
   color: white;
+  padding-left: 2em;
+`;
+
+export const Left = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  width: 30em;
 `;
 
 export const Center = styled.div`
@@ -33,70 +45,84 @@ export const Input = styled.input`
   border: solid 1px #eee;
   border-radius: 0.5em;
   margin-bottom: 0.5em;
+  padding: 0.4em;
+  &:hover {
+    background-color: #eee;
+  }
 `;
 
 export const Table = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   flex-flow: column nowrap;
   align-items: stretch;
-  margin-left: 2em;
-  margin-top: 2em;
   width: 100%;
 `;
 
 export const Row = styled.div`
   display: flex;
   justify-content: flex-start;
-  flex-flow: row nowrap;
-  align-items: stretch;
+  flex-flow: row wrap;
+  align-items: flex-start;
   height: auto;
   margin-bottom: 2em;
-  
+  margin-left: 0.5em;
 `;
 
-export const HeadRow = styled.div`
+export const MessageWrapper = styled.div`
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-flow: row nowrap;
-  align-items: stretch;
-  height: 1.5em;
-  color: #cccccc;
-  border-bottom: solid 1px #ff9999;
+  align-items: center;
+  align-content: stretch;
+  height: 3em;
+  color: #999;
+  border: solid 1px #cccccc;
+  border-radius: 0.5em;
+  font-weight: bold;
+  margin: 0.5em;
+  padding-left: 1.5em;
+  padding-right: 0.5em;
+`;
+
+export const User = styled.span`
   font-weight: bold;
 `;
 
-export const Cell = styled.span`
-  width: 25em;
-  padding: 0.5em;
-  height: auto;
+export const Text = styled.div`
+  width: 100%;
 `;
 
-export const Line = styled.div`
-  width: 100%;
-  height: auto;
-  padding-left: 0.5em;
+export const Date = styled.span`
+  color: #ccc;
+  font-size: 0.8em;
+  margin-left: 0.5em;
+`;
+
+export const Actions = styled.div`
+  width: 2em;
 `;
 
 const Chat = ({ items, onMessage }) => (
   <Table>
-    <HeadRow>
-      <Cell key="messages"></Cell>
-    </HeadRow>
     {items &&
       items.map(e => {
         console.log({ items, e });
         return (
           <Row key={`title-${e.id}`}>
-            <Line>
-            <Cell key="user">{e.userID}</Cell>,
-            <Cell key="date">{e.date.toLocaleString()}</Cell>
-            <div>{e.text}</div>
-            </Line>
+            <img src="/ava.png" />
+            <div>
+            <User>{e.userID}</User>
+            <Date>{e.date.toLocaleTimeString()}</Date>
+            <Text>{e.text}</Text>
+            </div>
           </Row>
         );
       })}
-    <Message placeholder="message" onKeyPress={onMessage} />
+      <MessageWrapper>+
+      <Message placeholder="Message" onKeyPress={onMessage} />
+      <Actions>@ :)</Actions>
+      </MessageWrapper>
   </Table>
 );
 

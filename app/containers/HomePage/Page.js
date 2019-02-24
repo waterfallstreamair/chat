@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import Column from '../../components/Column';
 import H3 from '../../components/H3';
+import H1 from '../../components/H1';
 import Content from '../../components/Content';
 import { Slack } from './slackapp';
-import Chat, { Center, Input, Selected } from './Chat';
+import Chat, { Center, Input, Selected, NotSelected, Left } from './Chat';
 
 export class HomePage extends React.Component {
   constructor(props) {
@@ -22,7 +23,7 @@ export class HomePage extends React.Component {
       channels: null,
       user: null,
       step: 'messages',
-      selected: null,
+      selected: 'general',
       messages: null,
     };
     this.slack = Slack.getInstance();
@@ -37,10 +38,13 @@ export class HomePage extends React.Component {
       this.slack.addUser('fullname1', 'name1');
       this.slack.addUser('fullname2', 'name2');
       this.slack.addUser('fullname3', 'name3');
-      this.slack.addChannel('c1', [...this.slack.users].map(e => e[0]));
+      this.slack.addChannel('general', [...this.slack.users].map(e => e[0]));
+      this.slack.addChannel('random', [...this.slack.users].map(e => e[0]));
+      this.slack.addChat(['Slackbot']);
     } catch (e) {
       console.log({ e });
     }
+   
     if (!this.slack.isLogged()) {
       this.setState({ step: 'login' });
     }
@@ -65,6 +69,11 @@ export class HomePage extends React.Component {
       this.slack.login(this.fullname.value, this.name.value);
       this.slack.save();
       this.setState({ step: 'messages' });
+    } catch (e) {
+      console.log({ e });
+    }
+    try{
+      this.selectChannel('general').addMessage('Hello')
     } catch (e) {
       console.log({ e });
     }
@@ -95,6 +104,14 @@ export class HomePage extends React.Component {
       selected: id,
       messages: this.slack.channels.get(id).messages,
     })
+    return this.slack.channels.get(id);
+  };
+  
+  selectChat = id => {
+    this.setState({
+      selected: id,
+      messages: this.slack.chats.get(id).messages,
+    })
   };
 
   onMessage = event => {
@@ -122,46 +139,64 @@ export class HomePage extends React.Component {
         {step === 'login' && (
           <Content>
             <Center>
+              <img src="/image.png" />
               <div>
-                <Input required ref={r => this.name = r} placeholder="name" />
+                <Input required ref={r => this.name = r} placeholder="name" 
+                  title="Your name"
+                />
               </div>
               <div>
-                <Input required ref={r => this.fullname = r} placeholder="fullname" />
+                <Input required ref={r => this.fullname = r} 
+                placeholder="fullname" title="Your full name" />
               </div>
-              <Input onClick={this.onLogin} type="button" value="Submit" />
+              <Input onClick={this.onLogin} type="button" value="Submit"
+                title="Submit data"
+              />
             </Center>
           </Content>
         )}
         {step === 'addChannel' && (
           <Content>
             <Center>
+              <Left>
+                <h2>Create a channel</h2>
+                Name
+              </Left>
               <div>
-                <Input required ref={r => this.channel = r} placeholder="channel" />
+                <Input required ref={r => this.channel = r} 
+                  placeholder="general" title="New channel name" />
               </div>
-              <Input onClick={this.onSubmitChannel} type="button" value="Submit" />
+              <Input onClick={this.onSubmitChannel} type="button" 
+                value="Create Channel" />
             </Center>
           </Content>
         )}
         {step === 'messages' && (
           <Content>
             <Column>
+              <H1>Klassroom</H1>
               <H3 onClick={this.onAddChannel}>Channels +</H3>
             {channels &&
                 [...channels].map(e => {
               const [k, v] = e;
               return k === selected ? (
-                    <Selected key={v.title}>{v.title}</Selected>
+                    <Selected key={v.title}># {v.title}</Selected>
                   ) : (
-                    <div onClick={() => this.selectChannel(k)} key={v.title}>
-                      {v.title}
-                    </div>)
+                    <NotSelected onClick={() => this.selectChannel(k)} key={v.title}>
+                      # {v.title}
+                    </NotSelected>)
             }
             )}
               <H3>Direct Messages +</H3>
               {chats &&
                 [...chats].map(e => {
                   const [k, v] = e;
-                  return <div key={v.name}>{v.name}</div>;
+                  return k === selected ? (
+                    <Selected key={v.title}>{k}</Selected>
+                  ) : (
+                    <NotSelected onClick={() => this.selectChat(k)} key={k}>
+                      {k}
+                    </NotSelected>)
                 })}
             </Column>
             <Chat items={messages} onMessage={this.onMessage} />

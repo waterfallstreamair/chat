@@ -18,10 +18,9 @@ import Main from '../../components/Main';
 export default function App() {
   return (
     <Main>
-      <Helmet titleTemplate="%s - Chat" defaultTitle="Chat v.1.0.0">
-        <meta name="description" content="Chat application" />
+      <Helmet titleTemplate="%s - Klassroom" defaultTitle="Klassroom">
+        <meta name="description" content="Klassroom application" />
       </Helmet>
-      <H1>Chat v.1.1.0</H1>
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="" component={NotFoundPage} />

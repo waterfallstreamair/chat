@@ -6,12 +6,7 @@ describe('homeReducer', () => {
   let state;
   beforeEach(() => {
     state = fromJS({
-      agencies: null,
-      categories: null,
-      prices: null,
-      filtered: null,
-      agencyId: null,
-      isValid: false,
+     
     });
   });
 

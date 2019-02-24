@@ -1,10 +1,10 @@
 {
-  "name": "prices",
+  "name": "chat",
   "version": "1.0.0",
-  "description": "agencies, categories, prices app",
+  "description": "chat",
   "repository": {
     "type": "git",
-    "url": "git://github.com/waterfallstreamair/prices.git"
+    "url": "git://github.com/waterfallstreamair/chat.git"
   },
   "engines": {
     "npm": ">=5",
