@@ -148,14 +148,14 @@ export class HomePage extends React.Component {
           .addMessage(event.target.value);
         this.setState({
           messages: this.slack.channels.get(this.state.selected).messages,
-        })
+        });
       } else {
         this.slack.chats
           .get(this.state.selected)
           .addMessage(event.target.value);
         this.setState({
           messages: this.slack.chats.get(this.state.selected).messages,
-        })
+        });
       }
       this.slack.save();
       event.target.value = '';
@@ -164,7 +164,7 @@ export class HomePage extends React.Component {
 
   toggleMobile = () => {
     this.setState(prev => ({
-      mobile: !prev.mobile, 
+      mobile: !prev.mobile,
     }));
   };
 
@@ -190,10 +190,8 @@ export class HomePage extends React.Component {
 
   addChatUser = id => {
     this.chat.value = [
-      ...new Set(
-        [...this.chat.value.split(','), id]
-        .filter(e => e))
-      .join(',')]
+      ...new Set([...this.chat.value.split(','), id].filter(e => e)),
+    ].join(',');
   };
 
   render() {
@@ -227,17 +225,24 @@ export class HomePage extends React.Component {
               <img src="/image.png" />
               <div>
                 <Input
-required ref={r => this.name = r} placeholder="name" 
+                  required
+                  ref={r => (this.name = r)}
+                  placeholder="name"
                   title="Your name"
                 />
               </div>
               <div>
                 <Input
-required ref={r => this.fullname = r} 
-                  placeholder="fullname" title="Your full name" />
+                  required
+                  ref={r => (this.fullname = r)}
+                  placeholder="fullname"
+                  title="Your full name"
+                />
               </div>
               <Input
-onClick={this.onLogin} type="button" value="Submit"
+                onClick={this.onLogin}
+                type="button"
+                value="Submit"
                 title="Submit data"
               />
             </Center>
@@ -252,13 +257,15 @@ onClick={this.onLogin} type="button" value="Submit"
               </Left>
               <div>
                 <Input
-required ref={r => this.channel = r} 
+                  required
+                  ref={r => (this.channel = r)}
                   placeholder="general"
                   title="New channel name"
                 />
               </div>
               <Input
-onClick={this.onSubmitChannel} type="button" 
+                onClick={this.onSubmitChannel}
+                type="button"
                 value="Create Channel"
               />
             </Center>
@@ -272,24 +279,27 @@ onClick={this.onSubmitChannel} type="button"
               </Left>
               <div>
                 <Input
-disabled ref={r => this.chat = r} 
+                  disabled
+                  ref={r => (this.chat = r)}
                   placeholder="users"
                   title="New chat users"
                 />
               </div>
               <Left>
-                {users && [...users].map(e => {
+                {users &&
+                  [...users].map(e => {
                     const [k, v] = e;
-                  return (
-                      <ChatUser onClick={() => this.addChatUser(k)}>
+                    return (
+                      <ChatUser key={k} onClick={() => this.addChatUser(k)}>
                         <img src="/ava.png" />
                         {`${v.name} - ${k}`}
-                    </ChatUser>
-                  )
+                      </ChatUser>
+                    );
                   })}
               </Left>
               <Input
-onClick={this.onSubmitChat} type="button" 
+                onClick={this.onSubmitChat}
+                type="button"
                 value="Create Chat"
               />
             </Center>
@@ -329,11 +339,11 @@ onClick={this.onSubmitChat} type="button"
                       key={v.title}
                     >
                       # {v.title}
-                    </NotSelected>)
-                }
-                )}
+                    </NotSelected>
+                  );
+                })}
               <H3 onClick={this.onAddChannel}>+ Add a channel</H3>
-              <SpaceBetween onClick={this.addChatStart} >
+              <SpaceBetween onClick={this.addChatStart}>
                 <strong>Direct Messages</strong>
                 <Image src="/plus.png" />
               </SpaceBetween>
