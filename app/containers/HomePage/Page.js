@@ -141,7 +141,7 @@ export class HomePage extends React.Component {
   };
 
   onMessage = event => {
-    if (event.charCode == '13') {
+    if (event.charCode === '13') {
       if (this.slack.channels.has(this.state.selected)) {
         this.slack.channels
           .get(this.state.selected)
